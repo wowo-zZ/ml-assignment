@@ -1,0 +1,4 @@
+function plotCostFun()
+  figure;
+  
+endfunction
