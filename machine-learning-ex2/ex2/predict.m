@@ -16,7 +16,12 @@ p = zeros(m, 1);
 %
 
 
+hx = sigmoid(X * theta);
+pos = find(hx >= 0.5);
+neg = find(hx < 0.5);
 
+p(pos) = 1;
+p(neg) = 0;
 
 
 
