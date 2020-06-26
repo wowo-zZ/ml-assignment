@@ -74,22 +74,31 @@ J = J / m;
 J = J +  lambda / 2 / m * (sum((sum(Theta1(:,2:end) .* Theta1(:,2:end))))' + sum((sum(Theta2(:,2:end) .* Theta2(:,2:end)))'));
 
 % º∆À„partial derivatives
-deltaCap2 = ones(num_labels, hidden_layer_size + 1);
-deltaCap1 = ones(hidden_layer_size, input_layer_size + 1);
+deltaCap2 = zeros(num_labels, hidden_layer_size + 1);
+deltaCap1 = zeros(hidden_layer_size, input_layer_size + 1);
 for i = 1:m
-  a3 = sigmoid(Theta2 * [ones(1); sigmoid(Theta1 * [ones(1); X(i,:)'])]);
-  z2 = Theta1 * [ones(1); X(i,:)'];
-  a2 = sigmoid(z2);
+  % feedforward
+  a1 = [1; X(i,:)'];
+  z2 = Theta1 * a1;
+  a2 = [1; sigmoid(z2)];
+  z3 = Theta2 * a2;
+  a3 = sigmoid(z3);
+  
+  % y
   tmpy = zeros(num_labels, 1);
   tmpy(y(i)) = 1;
-  delt3 = tmpy - a3;   
-  delt2 = Theta2'(2:end, :) * delt3 .* sigmoidGradient(z2);
-  deltCap2 = deltaCap2 + delt3 * [1, (a2)'];
-  deltCap1 = deltaCap1 + delt2 * [1, X(i,:)];
+  
+  % delta
+  delt3 = a3 - tmpy;   
+  delt2 = Theta2' * delt3 .* sigmoidGradient([1; z2]);
+  
+  % deltaCaps
+  deltaCap2 = deltaCap2 + delt3 * (a2)';
+  deltaCap1 = deltaCap1 + delt2(2:end) * (a1)';
 endfor
 
-Theta1_grad = deltaCap2 / m;
-Theta2_grad = deltaCap1 / m;
+Theta1_grad = deltaCap1 / m + lambda * [zeros(hidden_layer_size, 1), Theta1(:,2:end)] / m;
+Theta2_grad = deltaCap2 / m + lambda * [zeros(num_labels, 1), Theta2(:, 2:end)] / m;
 
 % -------------------------------------------------------------
 
