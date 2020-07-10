@@ -23,7 +23,7 @@ J = 1 / (2 * m) * (((X * theta - y) .* (X * theta - y))' * ones(size(X, 1), 1)) 
 
 
 
-grad = 1 / m * ((X * theta - y)' * X) + [0, lambda / m * theta(2:end)]; 
+grad = 1 / m * ((X * theta - y)' * X) + [0, lambda / m * theta(2:end)']; 
 
 
 
